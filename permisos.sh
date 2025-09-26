@@ -1,20 +1,14 @@
 #!/bin/bash
-# permisos.sh - procesa liv2019.csv desde stdin
-
-# Validar que hay datos por stdin
 if [ -t 0 ]; then
   echo "Cantidad inadecuada de entradas."
   echo "Uso: cat liv2019.csv | permisos.sh"
   exit 1
 fi
-
-# Procesar todo con awk (CSV usa ';')
 awk -F';' '
 BEGIN{
   OFS=""; col=-1; sum=0; cnt=0;
 }
 NR==1{
-  # detectar indice de "PERMISO 2019"
   for(i=1;i<=NF;i++){
     h=$i; gsub(/"/,"",h); hl=tolower(h);
     gsub(/[[:space:]]+/," ",hl);
