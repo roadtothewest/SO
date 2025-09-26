@@ -1,0 +1,43 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          weblib2019d
+# Required-Start:    $remote_fs $network
+# Required-Stop:     
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Servicio para microservicio Weblib2019
+# Description:       Levanta el microservicio weblib2019.py con CSV y puerto definidos
+### END INIT INFO
+
+# Rutas y parámetros
+CSV_FILE="/etc/weblib2019.d/lib2019.csv"
+PORT=9999
+PYTHON=/usr/bin/python3
+SCRIPT=/usr/local/bin/weblib2019.py   # Ajusta según donde tengas tu microservicio
+
+case "$1" in
+  start)
+    echo "Iniciando servicio weblib2019..."
+    nohup $PYTHON $SCRIPT --csv $CSV_FILE --port $PORT > /var/log/weblib2019.log 2>&1 &
+    echo $! > /var/run/weblib2019.pid
+    ;;
+  stop)
+    echo "Deteniendo servicio weblib2019..."
+    if [ -f /var/run/weblib2019.pid ]; then
+      kill $(cat /var/run/weblib2019.pid)
+      rm -f /var/run/weblib2019.pid
+    else
+      echo "No se encontró el PID del servicio"
+    fi
+    ;;
+  restart)
+    $0 stop
+    $0 start
+    ;;
+  *)
+    echo "Uso: /etc/init.d/weblib2019d {start|stop|restart}"
+    exit 1
+    ;;
+esac
+
+exit 0
